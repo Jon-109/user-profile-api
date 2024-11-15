@@ -53,5 +53,16 @@ def update_user(user_id):
 
     return jsonify(user)
 
+# Endpoint to delete a user by ID
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    global users
+    user = next((user for user in users if user["user_id"] == user_id), None)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    users = [u for u in users if u["user_id"] != user_id]  # Remove the user from the list
+    return jsonify({"message": f"User with ID {user_id} has been deleted"}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
