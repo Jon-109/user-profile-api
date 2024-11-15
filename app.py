@@ -22,7 +22,7 @@ def get_user(user_id):
     else:
         return jsonify({"error": "User not found"}), 404
 
-# Single endpoint to add a new user (fixing the duplicate)
+# Endpoint to add a new user
 @app.route('/users', methods=['POST'])
 def create_user():
     new_user = request.get_json()  # Get JSON data from the request
@@ -37,6 +37,21 @@ def create_user():
 
     # Return the newly created user with a 201 status code
     return jsonify(new_user), 201
+
+# Endpoint to update an existing user by ID
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    user = next((user for user in users if user["user_id"] == user_id), None)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    updated_data = request.get_json()
+    if "username" in updated_data:
+        user["username"] = updated_data["username"]
+    if "email" in updated_data:
+        user["email"] = updated_data["email"]
+
+    return jsonify(user)
 
 if __name__ == '__main__':
     app.run(debug=True)
